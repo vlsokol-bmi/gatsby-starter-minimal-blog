@@ -136,7 +136,28 @@ module.exports = {
         ],
       },
     },
-    `gatsby-plugin-gatsby-cloud`,
+    {
+      resolve: `gatsby-plugin-gatsby-cloud`,
+      options: {
+        headers: {
+          "/*": [
+            `Content-Security-Policy: ${process.env.CONTENT_SECURITY_POLICY}`,
+            "X-Frame-Options: DENY",
+            `X-Robots-Tag: ${process.env.X_ROBOTS_TAG}`,
+            "X-XSS-Protection: 1; mode=block",
+            "X-Content-Type-Options: nosniff",
+            "Referrer-Policy: strict-origin-when-cross-origin",
+            `Access-Control-Allow-Origin: ${process.env.ACCESS_CONTROL_ALLOW_ORIGIN}`
+          ]
+        }, // option to add more headers. `Link` headers are transformed by the below criteria
+        allPageHeaders: [], // option to add headers for all pages. `Link` headers are transformed by the below criteria
+        mergeSecurityHeaders: true, // boolean to turn off the default security headers
+        mergeLinkHeaders: true, // boolean to turn off the default gatsby js headers
+        mergeCachingHeaders: true, // boolean to turn off the default caching headers
+        transformHeaders: (headers, path) => headers, // optional transform for manipulating headers under each path (e.g.sorting), etc.
+        generateMatchPathRewrites: true, // boolean to turn off automatic creation of redirect rules for client only paths
+      },
+    },
     shouldAnalyseBundle && {
       resolve: `gatsby-plugin-webpack-bundle-analyser-v2`,
       options: {
